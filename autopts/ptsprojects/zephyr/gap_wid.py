@@ -13,13 +13,17 @@
 # more details.
 #
 
+import binascii
 import logging
 from time import sleep
+
+import re
 
 from autopts.wid import generic_wid_hdl
 from autopts.ptsprojects.stack import get_stack
 from autopts.pybtp import btp, defs
 from autopts.pybtp.types import WIDParams, UUID, gap_settings_btp2txt, AdType, AdFlags, IOCap
+from autopts.pybtp.types import L2CAPConnectionResponse
 
 log = logging.debug
 
@@ -81,15 +85,89 @@ def hdl_wid_145(_: WIDParams):
             break
     return False
 
+def hdl_wid_102(params: WIDParams):
+    if params.test_case_name.startswith("GAP/IDLE/BON/BV-03-C") or params.test_case_name.startswith("GAP/IDLE/BON/BV-05-C"):
+        btp.gap_set_io_cap(IOCap.no_input_output)
+        btp.core_reg_svc_l2cap()
+    elif params.test_case_name.startswith("GAP/IDLE/BON/BV-04-C") or params.test_case_name.startswith("GAP/IDLE/BON/BV-06-C"):
+        btp.gap_set_io_cap(IOCap.display_yesno)
+        btp.core_reg_svc_l2cap()
+    else:
+        btp.gap_set_io_cap(IOCap.keyboard_display)
+    btp.gap_set_gendiscov()
+    sleep(15)
+    btp.gap_conn()
+    btp.gap_wait_for_connection()
+    if params.test_case_name.startswith("GAP/IDLE/BON/BV-04-C") or params.test_case_name.startswith("GAP/IDLE/BON/BV-06-C"):
+        btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.insufficient_authentication)
+    if not (params.test_case_name.startswith("GAP/IDLE/BON/BV-05-C") or params.test_case_name.startswith("GAP/IDLE/BON/BV-06-C")):
+        btp.gap_pair()
+    if params.test_case_name.startswith("GAP/IDLE/BON/BV-02-C"):
+        btp.core_reg_svc_l2cap()
+        btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
+        btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+    return True
+
 def hdl_wid_105(_: WIDParams):
     btp.gap_set_conn()
     btp.gap_set_gendiscov()
+    return True
+
+def hdl_wid_146(_: WIDParams):
+    btp.gap_start_discov(transport='bredr', discov_type='active', mode='general')
+    return True
+
+def hdl_wid_147(_: WIDParams):
+    btp.gap_start_discov(transport='bredr', discov_type='active', mode='limited')
     return True
 
 def hdl_wid_160(_: WIDParams):
     btp.gap_set_limdiscov()
     return True
 
+def hdl_wid_164(_: WIDParams):
+    return True
+
+def hdl_wid_165(params: WIDParams):
+    btp.gap_start_discov(transport='bredr', discov_type='active', mode='general')
+    sleep(20)  # Give some time to discover devices
+    # btp.gap_stop_discov()
+    pts_name = re.findall(r'\'(.*)\'', params.description)
+    if len(pts_name) > 0:
+        pts_name = pts_name[0].encode('utf-8')
+        pts_name = str(binascii.hexlify(pts_name)).lstrip('b\'').rstrip('\'').upper()
+        return btp.check_scan_rep_and_rsp(pts_name, pts_name)
+    else:
+        return False
+
 def hdl_wid_222(_: WIDParams):
     btp.gap_pair()
+    return True
+
+def hdl_wid_264(params: WIDParams):
+    sleep(2)
+    if params.test_case_name.startswith("GAP/IDLE/BON/BV-04-C") or params.test_case_name.startswith("GAP/IDLE/BON/BV-06-C"):
+        pass
+    else:
+        btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
+    btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+    return True
+
+def hdl_wid_2001(params: WIDParams):
+    """
+    The secureId is [passkey]
+    """
+    pattern = '[\d]{6}'
+    passkey = re.search(pattern, params.description)[0]
+    stack = get_stack()
+    bd_addr = btp.pts_addr_get()
+    bd_addr_type = btp.pts_addr_type_get()
+
+    if stack.gap.get_passkey() is None:
+        return False
+    else:
+        if "verify" in params.description:
+            btp.gap_passkey_confirm_rsp(bd_addr, bd_addr_type, passkey)
+        else:
+            btp.gap_passkey_entry_rsp(bd_addr, bd_addr_type, passkey)
     return True
