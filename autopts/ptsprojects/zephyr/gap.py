@@ -223,6 +223,16 @@ def test_cases(ptses):
         ZTestCase("GAP", "GAP/SEC/CSIGN/BI-04-C",
                   cmds=pre_conditions + init_gatt_db2,
                   generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/IDLE/DNDIS/BV-01-C",
+                  cmds=pre_conditions + [TestFunc(lambda: btp.gap_set_gendiscov())],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/DM/NBON/BV-01-C",
+                  cmds=pre_conditions + [TestFunc(lambda: btp.gap_set_gendiscov()),
+                                         TestFunc(lambda : btp.gap_set_io_cap(IOCap.no_input_output))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/DM/BON/BV-01-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.no_input_output)), TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60))],
+                  generic_wid_hdl=gap_wid_hdl),
     ]
 
     test_case_name_list = pts.get_test_case_list('GAP')
