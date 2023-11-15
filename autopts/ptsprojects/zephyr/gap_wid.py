@@ -108,20 +108,6 @@ def hdl_wid_36(_: WIDParams):
     btp.gap_set_gendiscov()
     return True
 
-def hdl_wid_52(params: WIDParams):
-    stack = get_stack()
-
-    btp.gap_adv_off()
-    btp.gap_set_conn()
-    btp.gap_set_gendiscov()
-
-    if params.test_case_name.startswith("GAP/DM/LEP/BV-01-C"):
-        stack.gap.ad[AdType.flags] = format(AdFlags.le_gen_discov_mode, '02x')
-
-    btp.gap_adv_ind_on(ad=stack.gap.ad)
-
-    return True
-
 def hdl_wid_145(_: WIDParams):
     timeout = 0
     while True:
