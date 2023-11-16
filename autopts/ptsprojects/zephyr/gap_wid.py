@@ -161,8 +161,7 @@ def hdl_wid_102(params: WIDParams):
           or params.test_case_name.startswith("GAP/SEC/SEM/BV-51-C")
           or params.test_case_name.startswith("GAP/SEC/SEM/BV-52-C")):
         btp.gap_set_io_cap(IOCap.display_yesno)
-    elif (params.test_case_name.startswith("GAP/SEC/SEM/BV-08-C")
-          or params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C")):
+    elif (params.test_case_name.startswith("GAP/SEC/SEM/BV-08-C")):
         btp.gap_set_io_cap(IOCap.no_input_output)
     else:
         btp.gap_set_io_cap(IOCap.keyboard_display)
@@ -224,11 +223,6 @@ def hdl_wid_103(params: WIDParams):
         or params.test_case_name.startswith("GAP/SEC/SEM/BV-51-C")
         or params.test_case_name.startswith("GAP/SEC/SEM/BV-52-C")):
         btp.gap_set_bondable_off()
-    if params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C"):
-        if l2cal_server_count == 0:
-            btp.gap_set_io_cap(IOCap.no_input_output)
-        else:
-            btp.gap_set_io_cap(IOCap.display_only)
 
     if (params.test_case_name.startswith("GAP/SEC/SEM/BV-50-C")
         or params.test_case_name.startswith("GAP/SEC/SEM/BV-06-C")
@@ -258,12 +252,10 @@ def hdl_wid_103(params: WIDParams):
         if l2cal_server_count == 0:
             stack.l2cap_init(psm=0x2001, initial_mtu=60)
             btp.l2cap_conn(None, None, psm=0x2001,mtu=60)
-            stack.l2cap.wait_for_connection(0, 30)
+            wait_for_confirm_passkey()
         else:
             stack.l2cap_init(psm=0x1001, initial_mtu=60)
             btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
-            wait_for_confirm_passkey()
-            stack.l2cap.wait_for_connection(1, 30)
     else:
         btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
     if params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C"):
@@ -371,20 +363,19 @@ def hdl_wid_2001(params: WIDParams):
     """
     The secureId is [passkey]
     """
-    if not (params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C")):
-        pattern = '[\d]{6}'
-        passkey = re.search(pattern, params.description)[0]
-        stack = get_stack()
-        bd_addr = btp.pts_addr_get()
-        bd_addr_type = btp.pts_addr_type_get()
+    pattern = '[\d]{6}'
+    passkey = re.search(pattern, params.description)[0]
+    stack = get_stack()
+    bd_addr = btp.pts_addr_get()
+    bd_addr_type = btp.pts_addr_type_get()
 
-        if stack.gap.get_passkey() is None:
-            return False
+    if stack.gap.get_passkey() is None:
+        return False
+    else:
+        if "verify" in params.description:
+            btp.gap_passkey_confirm_rsp(bd_addr, bd_addr_type, passkey)
         else:
-            if "verify" in params.description:
-                btp.gap_passkey_confirm_rsp(bd_addr, bd_addr_type, passkey)
-            else:
-                btp.gap_passkey_entry_rsp(bd_addr, bd_addr_type, passkey)
+            btp.gap_passkey_entry_rsp(bd_addr, bd_addr_type, passkey)
     return True
 
 def hdl_wid_20117(_: WIDParams):
