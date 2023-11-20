@@ -180,7 +180,8 @@ def hdl_wid_102(params: WIDParams):
         or params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C")
         or params.test_case_name.startswith("GAP/SEC/SEM/BV-50-C")
         or params.test_case_name.startswith("GAP/SEC/SEM/BV-51-C")
-        or params.test_case_name.startswith("GAP/SEC/SEM/BV-52-C")):
+        or params.test_case_name.startswith("GAP/SEC/SEM/BV-52-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BV-53-C")):
         btp.gap_pair()
     if params.test_case_name.startswith("GAP/IDLE/BON/BV-02-C"):
         btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
@@ -240,14 +241,16 @@ def hdl_wid_103(params: WIDParams):
             or params.test_case_name.startswith("GAP/SEC/SEM/BV-51-C")
             or params.test_case_name.startswith("GAP/SEC/SEM/BV-52-C")):
             btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.insufficient_authentication)
-        elif (params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C")):
+        elif (params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C")
+              or params.test_case_name.startswith("GAP/SEC/SEM/BV-53-C")):
             if l2cal_server_count == 0:
                 btp.l2cap_listen(psm=0x2001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.success)
             else:
                 btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.insufficient_authentication)
         else:
             btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.success)
-    if (params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C")):
+    if (params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BV-53-C")):
         stack = get_stack()
         if l2cal_server_count == 0:
             stack.l2cap_init(psm=0x2001, initial_mtu=60)
@@ -258,7 +261,8 @@ def hdl_wid_103(params: WIDParams):
             btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
     else:
         btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
-    if params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C"):
+    if (params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BV-53-C")):
         l2cal_server_count += 1
     return True
 
