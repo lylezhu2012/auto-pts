@@ -119,6 +119,10 @@ CORE = {
                        defs.BTP_INDEX_NONE, ""),
     "log_message": (defs.BTP_SERVICE_ID_CORE, defs.CORE_LOG_MESSAGE,
                     defs.BTP_INDEX_NONE),
+    "sdp_reg": (defs.BTP_SERVICE_ID_CORE, defs.CORE_REGISTER_SERVICE,
+                defs.BTP_INDEX_NONE, defs.BTP_SERVICE_ID_SDP),
+    "sdp_unreg": (defs.BTP_SERVICE_ID_CORE, defs.CORE_UNREGISTER_SERVICE,
+                  defs.BTP_INDEX_NONE, defs.BTP_SERVICE_ID_SDP),
 }
 
 
@@ -595,7 +599,7 @@ def core_reg_svc_ccp():
     iutctl = get_iut()
     iutctl.btp_socket.send_wait_rsp(*CORE['ccp_reg'])
 
-    
+
 def core_reg_svc_cas():
     logging.debug("%s", core_reg_svc_cas.__name__)
 
@@ -609,6 +613,22 @@ def core_reg_svc_vcp():
     iutctl = get_iut()
     iutctl.btp_socket.send_wait_rsp(*CORE['vcp_reg'])
 
+def core_reg_svc_sdp():
+    logging.debug("%s", core_reg_svc_gap.__name__)
+
+    iutctl = get_iut()
+    iutctl.btp_socket.send(*CORE['sdp_reg'])
+
+    core_reg_svc_rsp_succ()
+
+
+def core_unreg_svc_sdp():
+    logging.debug("%s", core_unreg_svc_gap.__name__)
+
+    iutctl = get_iut()
+    iutctl.btp_socket.send(*CORE['sdp_unreg'])
+
+    core_unreg_svc_rsp_succ()
 
 def core_reg_svc_rsp_succ():
     logging.debug("%s", core_reg_svc_rsp_succ.__name__)
