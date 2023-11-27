@@ -82,7 +82,7 @@ class AdType:
     le_role = 0x1c
     uri = 0x24
     rsi = 0x2e
-    
+
 
 class AdFlags:
     le_limit_discov_mode = 0x01
@@ -273,6 +273,7 @@ class L2CAPConnectionResponse:
     insufficient_authorization = 2
     insufficient_encryption_key_size = 3
     insufficient_encryption = 4
+    mode4_level4 = 5
 
 
 class WIDParams(NamedTuple):
@@ -342,4 +343,3 @@ class Context(IntFlag):
     ALERTS              = 0x0400
     EMERGENCY_ALARM     = 0x0800
     ANY_CONTEXT         = 0x0FFF
-    

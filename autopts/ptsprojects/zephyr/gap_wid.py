@@ -83,6 +83,8 @@ l2cal_server_count = 0
 
 def hdl_wid_33(params: WIDParams):
     global l2cal_server_count
+    btp.gap_set_nonconn()
+    btp.gap_set_nondiscov()
     if (params.test_case_name.startswith("GAP/MOD/NBON/BV-03-C")
         or params.test_case_name.startswith("GAP/SEC/SEM/BI-24-C")):
         btp.gap_set_io_cap(IOCap.no_input_output)
@@ -97,7 +99,9 @@ def hdl_wid_33(params: WIDParams):
         if (0 == l2cal_server_count):
             btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
             l2cal_server_count += 1
+    # sleep(10)
     btp.gap_set_gendiscov()
+    btp.gap_wait_for_disconnection()
     return True
 
 def hdl_wid_34(_: WIDParams):
@@ -163,29 +167,41 @@ def hdl_wid_102(params: WIDParams):
         btp.gap_set_io_cap(IOCap.display_yesno)
     elif (params.test_case_name.startswith("GAP/SEC/SEM/BV-08-C")):
         btp.gap_set_io_cap(IOCap.no_input_output)
+    elif (params.test_case_name.startswith("GAP/SEC/SEM/BI-11-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-12-C")):
+        pass
     else:
         btp.gap_set_io_cap(IOCap.keyboard_display)
     btp.gap_set_gendiscov()
-    sleep(15)
-    btp.gap_conn(transport=defs.GAP_CONNECT_BREDR)
-    btp.gap_wait_for_connection()
-    if params.test_case_name.startswith("GAP/IDLE/BON/BV-04-C") or params.test_case_name.startswith("GAP/IDLE/BON/BV-06-C"):
-        btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.insufficient_authentication)
-    if not (params.test_case_name.startswith("GAP/IDLE/BON/BV-05-C")
-        or params.test_case_name.startswith("GAP/IDLE/BON/BV-06-C")
-        or params.test_case_name.startswith("GAP/SEC/SEM/BV-05-C")
-        or params.test_case_name.startswith("GAP/SEC/SEM/BV-06-C")
-        or params.test_case_name.startswith("GAP/SEC/SEM/BV-07-C")
-        or params.test_case_name.startswith("GAP/SEC/SEM/BV-08-C")
-        or params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C")
-        or params.test_case_name.startswith("GAP/SEC/SEM/BV-50-C")
-        or params.test_case_name.startswith("GAP/SEC/SEM/BV-51-C")
-        or params.test_case_name.startswith("GAP/SEC/SEM/BV-52-C")
-        or params.test_case_name.startswith("GAP/SEC/SEM/BV-53-C")):
-        btp.gap_pair()
-    if params.test_case_name.startswith("GAP/IDLE/BON/BV-02-C"):
-        btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
-        btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+    if (params.test_case_name.startswith("GAP/SEC/SEM/BI-11-C")):
+        pass
+    else:
+        sleep(15)
+        btp.gap_conn(transport=defs.GAP_CONNECT_BREDR)
+        btp.gap_wait_for_connection()
+        if params.test_case_name.startswith("GAP/IDLE/BON/BV-04-C") or params.test_case_name.startswith("GAP/IDLE/BON/BV-06-C"):
+            btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.insufficient_authentication)
+        if not (params.test_case_name.startswith("GAP/IDLE/BON/BV-05-C")
+            or params.test_case_name.startswith("GAP/IDLE/BON/BV-06-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-05-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-06-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-07-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-08-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-09-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-50-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-51-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-52-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-53-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-16-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-05-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-11-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-12-C")):
+            btp.gap_pair()
+        if params.test_case_name.startswith("GAP/IDLE/BON/BV-02-C"):
+            btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
+            btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+        if params.test_case_name.startswith("GAP/SEC/SEM/BV-16-C"):
+            btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
     return True
 
 def timeout_cb(flag):
@@ -331,11 +347,19 @@ def hdl_wid_166(_: WIDParams):
 def hdl_wid_167(_: WIDParams):
     return True
 
-def hdl_wid_222(_: WIDParams):
-    btp.gap_pair()
+def hdl_wid_220(_: WIDParams):
+    return get_stack().l2cap.wait_for_disconnection(0, 30)
+
+def hdl_wid_222(params: WIDParams):
+    if not (params.test_case_name.startswith("GAP/SEC/SEM/BI-01-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-05-C")):
+        btp.gap_pair()
+    if (params.test_case_name.startswith("GAP/SEC/SEM/BV-47-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BV-48-C")):
+        btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
     return True
 
-def hdl_wid_231(params: WIDParams):
+def hdl_wid_231(_: WIDParams):
     #case GAP/SEC/SEM/BV-08-C
     btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.success)
     btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
@@ -344,8 +368,29 @@ def hdl_wid_231(params: WIDParams):
     return True
 
 def hdl_wid_251(params: WIDParams):
-    btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
-    btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+    if (params.test_case_name.startswith("GAP/SEC/SEM/BV-13-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BV-47-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BV-48-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BV-49-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-01-C")):
+        # wait_for_confirm_passkey()
+        pass
+    else:
+        btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
+        btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+    return True
+
+def hdl_wid_252(_: WIDParams):
+    return True
+
+def hdl_wid_255(_: WIDParams):
+    return True
+
+def hdl_wid_256(_: WIDParams):
+    btp.gap_set_gendiscov()
+    return True
+
+def hdl_wid_260(_: WIDParams):
     return True
 
 def hdl_wid_264(params: WIDParams):
@@ -354,6 +399,24 @@ def hdl_wid_264(params: WIDParams):
         pass
     else:
         btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
+    btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+    return True
+
+
+def hdl_wid_265(params: WIDParams):
+    if (params.test_case_name.startswith("GAP/SEC/SEM/BI-12-C")):
+        btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+    else:
+        # Please initiate a link encryption with the Lower Tester.
+        btp.gap_pair()
+    return True
+
+def hdl_wid_266(_: WIDParams):
+    stack = get_stack()
+    return stack.gap.wait_for_disconnection(timeout=30)
+
+def hdl_wid_270(_: WIDParams):
+    btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.success)
     btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
     return True
 

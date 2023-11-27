@@ -16,8 +16,8 @@
 """GAP test cases"""
 import binascii
 
-from autopts.pybtp import btp
-from autopts.pybtp.types import Addr, IOCap, AdType, AdFlags, Prop, Perm, UUID, UriScheme
+from autopts.pybtp import btp, defs
+from autopts.pybtp.types import Addr, IOCap, AdType, AdFlags, Prop, Perm, UUID, UriScheme, L2CAPConnectionResponse
 from autopts.client import get_unique_name
 from autopts.ptsprojects.stack import get_stack
 from autopts.ptsprojects.testcase import TestFunc
@@ -238,6 +238,51 @@ def test_cases(ptses):
                   generic_wid_hdl=gap_wid_hdl),
         ZTestCase("GAP", "GAP/DM/BON/BV-01-C",
                   cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.no_input_output)), TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-46-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.no_input_output)), TestFunc(lambda: btp.l2cap_listen(psm=0x27, transport=defs.L2CAP_TRANSPORT_LE, mtu=120))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-11-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.display_yesno)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.mode4_level4))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-12-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.display_yesno)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.mode4_level4))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-13-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.display_yesno)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.insufficient_authentication))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-14-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.display_yesno)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.insufficient_authentication))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-15-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.display_yesno)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.mode4_level4))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-47-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.display_yesno)), TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.insufficient_authentication))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-48-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.display_yesno)), TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.insufficient_authentication))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-49-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.display_yesno)), TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.mode4_level4))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-16-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.display_yesno)), TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.mode4_level4))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-17-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.display_yesno)), TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.mode4_level4))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BV-20-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.display_yesno)), TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.mode4_level4))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BI-01-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.keyboard_display)), TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.success))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BI-11-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.no_input_output)), TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60))],
+                  generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/SEC/SEM/BI-12-C",
+                  cmds=pre_conditions + [TestFunc(lambda : btp.gap_set_io_cap(IOCap.no_input_output)), TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60)), TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.success))],
                   generic_wid_hdl=gap_wid_hdl),
     ]
 
