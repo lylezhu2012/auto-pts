@@ -152,6 +152,7 @@ def hdl_wid_86(params: WIDParams):
     return True
 
 def hdl_wid_102(params: WIDParams):
+    btp.gap_wait_for_disconnection()
     if (params.test_case_name.startswith("GAP/IDLE/BON/BV-03-C")
         or params.test_case_name.startswith("GAP/IDLE/BON/BV-05-C")
         or params.test_case_name.startswith("GAP/SEC/SEM/BV-05-C")
@@ -168,12 +169,34 @@ def hdl_wid_102(params: WIDParams):
     elif (params.test_case_name.startswith("GAP/SEC/SEM/BV-08-C")):
         btp.gap_set_io_cap(IOCap.no_input_output)
     elif (params.test_case_name.startswith("GAP/SEC/SEM/BI-11-C")
-          or params.test_case_name.startswith("GAP/SEC/SEM/BI-12-C")):
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-12-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-02-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-06-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-03-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-07-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-14-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-15-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-16-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-17-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-18-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-19-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-04-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-08-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-31-C")
+          ):
         pass
     else:
         btp.gap_set_io_cap(IOCap.keyboard_display)
     btp.gap_set_gendiscov()
-    if (params.test_case_name.startswith("GAP/SEC/SEM/BI-11-C")):
+    if (params.test_case_name.startswith("GAP/SEC/SEM/BI-11-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-02-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-03-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-14-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-15-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-16-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-04-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-31-C")
+        ):
         pass
     else:
         sleep(15)
@@ -195,7 +218,21 @@ def hdl_wid_102(params: WIDParams):
             or params.test_case_name.startswith("GAP/SEC/SEM/BV-16-C")
             or params.test_case_name.startswith("GAP/SEC/SEM/BI-05-C")
             or params.test_case_name.startswith("GAP/SEC/SEM/BI-11-C")
-            or params.test_case_name.startswith("GAP/SEC/SEM/BI-12-C")):
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-12-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-02-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-06-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-03-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-07-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-14-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-15-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-16-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-17-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-18-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-19-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-04-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-08-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-31-C")
+            ):
             btp.gap_pair()
         if params.test_case_name.startswith("GAP/IDLE/BON/BV-02-C"):
             btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
@@ -372,7 +409,12 @@ def hdl_wid_251(params: WIDParams):
         or params.test_case_name.startswith("GAP/SEC/SEM/BV-47-C")
         or params.test_case_name.startswith("GAP/SEC/SEM/BV-48-C")
         or params.test_case_name.startswith("GAP/SEC/SEM/BV-49-C")
-        or params.test_case_name.startswith("GAP/SEC/SEM/BI-01-C")):
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-01-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-14-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-15-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-16-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-31-C")
+        ):
         # wait_for_confirm_passkey()
         pass
     else:
@@ -390,7 +432,25 @@ def hdl_wid_256(_: WIDParams):
     btp.gap_set_gendiscov()
     return True
 
+def hdl_wid_257(_: WIDParams):
+    return True
+
+def hdl_wid_258(_: WIDParams):
+    return True
+
+def hdl_wid_259(_: WIDParams):
+    return True
+
 def hdl_wid_260(_: WIDParams):
+    return True
+
+def hdl_wid_261(_: WIDParams):
+    return True
+
+def hdl_wid_262(_: WIDParams):
+    return True
+
+def hdl_wid_263(_: WIDParams):
     return True
 
 def hdl_wid_264(params: WIDParams):
@@ -402,9 +462,17 @@ def hdl_wid_264(params: WIDParams):
     btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
     return True
 
-
 def hdl_wid_265(params: WIDParams):
-    if (params.test_case_name.startswith("GAP/SEC/SEM/BI-12-C")):
+    if (params.test_case_name.startswith("GAP/SEC/SEM/BI-12-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-06-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-07-C")
+        ):
+        btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+    elif (params.test_case_name.startswith("GAP/SEC/SEM/BI-17-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-18-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-19-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-08-C")
+        ):
         btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
     else:
         # Please initiate a link encryption with the Lower Tester.
