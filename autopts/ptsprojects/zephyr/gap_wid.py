@@ -127,6 +127,7 @@ def hdl_wid_145(_: WIDParams):
     return False
 
 def hdl_wid_78(params: WIDParams):
+    btp.gap_wait_for_disconnection()
     if params.test_case_name.startswith("GAP/CONN/ACEP"):
         # Use LE ANY addr to trigger auto connection establishment procedure
         btp.gap_conn(b"00:00:00:00:00:00", 0)
@@ -136,6 +137,9 @@ def hdl_wid_78(params: WIDParams):
         # btp.gap_stop_discov()
         btp.gap_conn()
     else:
+        # btp.gap_start_discov(transport='le', discov_type='active', mode='observe')
+        sleep(3)  # Give some time to discover devices
+        # btp.gap_stop_discov()
         btp.gap_conn()
 
     return True
@@ -232,6 +236,7 @@ def hdl_wid_102(params: WIDParams):
             or params.test_case_name.startswith("GAP/SEC/SEM/BI-04-C")
             or params.test_case_name.startswith("GAP/SEC/SEM/BI-08-C")
             or params.test_case_name.startswith("GAP/SEC/SEM/BI-31-C")
+            or params.test_case_name.startswith("GAP/DM/BON/BV-01-C")
             ):
             btp.gap_pair()
         if params.test_case_name.startswith("GAP/IDLE/BON/BV-02-C"):
@@ -513,8 +518,12 @@ def hdl_wid_2001(params: WIDParams):
             btp.gap_passkey_entry_rsp(bd_addr, bd_addr_type, passkey)
     return True
 
-def hdl_wid_20117(_: WIDParams):
-    btp.gap_pair()
+def hdl_wid_20117(params: WIDParams):
+    if (params.test_case_name.startswith("GAP/DM/BON/BV-01-C")
+        ):
+        pass
+    else:
+        btp.gap_pair()
     btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.success)
     btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
     return True
