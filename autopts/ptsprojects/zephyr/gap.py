@@ -345,6 +345,9 @@ def test_cases(ptses):
                                          TestFunc(lambda: stack.l2cap_init(psm=0x1001, initial_mtu=60)),
                                          TestFunc(lambda: btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.mode4_level4))],
                   generic_wid_hdl=gap_wid_hdl),
+        ZTestCase("GAP", "GAP/DM/LEP/BV-07-C",
+                  cmds=pre_conditions + [TestFunc(lambda: btp.gap_set_gendiscov())],
+                  generic_wid_hdl=gap_wid_hdl),
     ]
 
     test_case_name_list = pts.get_test_case_list('GAP')
