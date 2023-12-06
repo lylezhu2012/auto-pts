@@ -112,19 +112,28 @@ def hdl_wid_36(_: WIDParams):
     btp.gap_set_gendiscov()
     return True
 
-def hdl_wid_145(_: WIDParams):
-    timeout = 0
-    while True:
-        stack = get_stack()
-        if not stack.gap.current_settings_get(
-            gap_settings_btp2txt[defs.GAP_SETTINGS_DISCOVERABLE]):
-            return True
-        else:
-            sleep(5)
-            timeout += 5
-        if timeout >= 60:
-            break
-    return False
+def hdl_wid_52(params: WIDParams):
+    stack = get_stack()
+
+    btp.gap_adv_off()
+    btp.gap_set_conn()
+    btp.gap_set_gendiscov()
+
+    btp.gap_adv_ind_on(ad=stack.gap.ad)
+
+    if (params.test_case_name.startswith("GAP/DM/LEP/BV-08-C")):
+        btp.gap_set_nondiscov()
+        btp.gap_set_nonconn()
+    return True
+
+def hdl_wid_53(params: WIDParams):
+    stack = get_stack()
+
+    if not (params.test_case_name.startswith("GAP/DISC/GENM/BV-02-C")):
+        btp.gap_set_nonconn()
+    btp.gap_set_gendiscov()
+    btp.gap_adv_ind_on(ad=stack.gap.ad)
+    return True
 
 def hdl_wid_78(params: WIDParams):
     btp.gap_wait_for_disconnection()
@@ -187,6 +196,19 @@ def hdl_wid_102(params: WIDParams):
           or params.test_case_name.startswith("GAP/SEC/SEM/BI-04-C")
           or params.test_case_name.startswith("GAP/SEC/SEM/BI-08-C")
           or params.test_case_name.startswith("GAP/SEC/SEM/BI-31-C")
+          or params.test_case_name.startswith("GAP/DM/LEP/BV-12-C")
+          or params.test_case_name.startswith("GAP/DM/LEP/BV-15-C")
+          or params.test_case_name.startswith("GAP/DM/LEP/BV-20-C")
+          or params.test_case_name.startswith("GAP/DM/LEP/BV-14-C")
+          or params.test_case_name.startswith("GAP/DM/LEP/BV-16-C")
+          or params.test_case_name.startswith("GAP/DM/LEP/BV-21-C")
+          or params.test_case_name.startswith("GAP/DM/LEP/BV-17-C")
+          or params.test_case_name.startswith("GAP/DM/LEP/BI-01-C")
+          or params.test_case_name.startswith("GAP/DM/LEP/BV-22-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-27-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-32-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-26-C")
+          or params.test_case_name.startswith("GAP/SEC/SEM/BI-25-C")
           ):
         pass
     else:
@@ -237,12 +259,20 @@ def hdl_wid_102(params: WIDParams):
             or params.test_case_name.startswith("GAP/SEC/SEM/BI-08-C")
             or params.test_case_name.startswith("GAP/SEC/SEM/BI-31-C")
             or params.test_case_name.startswith("GAP/DM/BON/BV-01-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-27-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-32-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-26-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BI-25-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-25-C")
+            or params.test_case_name.startswith("GAP/SEC/SEM/BV-30-C")
             ):
             btp.gap_pair()
         if params.test_case_name.startswith("GAP/IDLE/BON/BV-02-C"):
             btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
             btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
         if params.test_case_name.startswith("GAP/SEC/SEM/BV-16-C"):
+            btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+        if params.test_case_name.startswith("GAP/SEC/SEM/BI-32-C"):
             btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
     return True
 
@@ -352,6 +382,20 @@ def hdl_wid_123(_: WIDParams):
         return False
     return True
 
+def hdl_wid_145(_: WIDParams):
+    timeout = 0
+    while True:
+        stack = get_stack()
+        if not stack.gap.current_settings_get(
+            gap_settings_btp2txt[defs.GAP_SETTINGS_DISCOVERABLE]):
+            return True
+        else:
+            sleep(5)
+            timeout += 5
+        if timeout >= 60:
+            break
+    return False
+
 def hdl_wid_146(_: WIDParams):
     btp.gap_start_discov(transport='bredr', discov_type='active', mode='general')
     return True
@@ -389,7 +433,13 @@ def hdl_wid_166(_: WIDParams):
 def hdl_wid_167(_: WIDParams):
     return True
 
-def hdl_wid_220(_: WIDParams):
+def hdl_wid_213(_: WIDParams):
+    return True
+
+def hdl_wid_220(params: WIDParams):
+    if (params.test_case_name.startswith("GAP/SEC/SEM/BV-25-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BV-30-C")):
+        btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
     return get_stack().l2cap.wait_for_disconnection(0, 30)
 
 def hdl_wid_222(params: WIDParams):
@@ -426,6 +476,19 @@ def hdl_wid_251(params: WIDParams):
         btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120)
         btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
     return True
+
+def hdl_wid_242(params: WIDParams):
+    """
+    Please send a Security Request.
+    """
+    if (params.test_case_name.startswith("GAP/SEC/SEM/BV-25-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BV-25-C")
+        ):
+        btp.gap_pair()
+        return True
+    else:
+        # This is done by PTS
+        return False
 
 def hdl_wid_252(_: WIDParams):
     return True
@@ -484,13 +547,49 @@ def hdl_wid_265(params: WIDParams):
         btp.gap_pair()
     return True
 
-def hdl_wid_266(_: WIDParams):
+def hdl_wid_266(params: WIDParams):
     stack = get_stack()
-    return stack.gap.wait_for_disconnection(timeout=30)
+    if (params.test_case_name.startswith("GAP/SEC/SEM/BI-27-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-32-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-26-C")
+        or params.test_case_name.startswith("GAP/SEC/SEM/BI-25-C")
+        ):
+        return stack.l2cap.wait_for_disconnection(0, timeout=30)
+    else:
+        return stack.gap.wait_for_disconnection(timeout=30)
 
 def hdl_wid_270(_: WIDParams):
     btp.l2cap_listen(psm=0x1001, transport=defs.L2CAP_TRANSPORT_BREDR, mtu=120, response=L2CAPConnectionResponse.success)
     btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+    return True
+
+def hdl_wid_273(params: WIDParams):
+    if params.test_case_name.startswith("GAP/SEC/SEM/BI-32-C"):
+        pass
+    else:
+        btp.l2cap_conn(None, None, psm=0x1001,mtu=60)
+    return True
+
+def hdl_wid_500(_: WIDParams):
+    stack = get_stack()
+
+    btp.gap_adv_off()
+    btp.gap_set_conn()
+    btp.gap_set_gendiscov()
+
+    stack.gap.sd = {AdType.name_full: 'TDV1'.encode('utf-8').hex()}
+    btp.gap_adv_ind_on(sd=stack.gap.sd)
+    return True
+
+def hdl_wid_501(_: WIDParams):
+    stack = get_stack()
+
+    btp.gap_adv_off()
+    btp.gap_set_conn()
+    btp.gap_set_gendiscov()
+
+    stack.gap.sd = {AdType.name_full: 'TDV2'.encode('utf-8').hex()}
+    btp.gap_adv_ind_on(sd=stack.gap.sd)
     return True
 
 def hdl_wid_1301(_: WIDParams):
@@ -516,6 +615,13 @@ def hdl_wid_2001(params: WIDParams):
             btp.gap_passkey_confirm_rsp(bd_addr, bd_addr_type, passkey)
         else:
             btp.gap_passkey_entry_rsp(bd_addr, bd_addr_type, passkey)
+    return True
+
+def hdl_wid_20100(params: WIDParams):
+    btp.gap_conn()
+    if (params.test_case_name.startswith("GAP/DM/LEP/BV-20-C")):
+        btp.gap_wait_for_connection()
+        btp.gap_pair()
     return True
 
 def hdl_wid_20117(params: WIDParams):
