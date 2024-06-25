@@ -47,6 +47,8 @@ L2CAP = {
                 CONTROLLER_INDEX),
     "echo": (defs.BTP_SERVICE_ID_L2CAP, defs.L2CAP_ECHO,
                 CONTROLLER_INDEX),
+    "cls_listen": (defs.BTP_SERVICE_ID_L2CAP, defs.L2CAP_CLS_LISTEN,
+                CONTROLLER_INDEX),
 }
 
 
@@ -361,6 +363,20 @@ def l2cap_echo(bd_addr, bd_addr_type, val=None, val_mtp=None):
         data_ba.extend(val_ba)
 
     iutctl.btp_socket.send_wait_rsp(*L2CAP['echo'], data=data_ba)
+
+
+def l2cap_cls_listen(psm):
+    logging.debug("%s %r", l2cap_cls_listen.__name__, psm)
+
+    iutctl = get_iut()
+
+    if isinstance(psm, str):
+        psm = int(psm, 16)
+
+    data_ba = bytearray(struct.pack('H', psm))
+
+    iutctl.btp_socket.send_wait_rsp(*L2CAP['cls_listen'], data=data_ba)
+
 
 L2CAP_EV = {
     defs.L2CAP_EV_CONNECTED: l2cap_connected_ev,
