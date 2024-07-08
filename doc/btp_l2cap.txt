@@ -239,6 +239,47 @@ Commands and responses:
 
 		In case of an error, the error response will be returned.
 
+	Opcode 0x0e - Listen with specified mdoe command
+
+		Controller Index:	<controller id>
+		Command parameters:	PSM (2 octets)
+					Transport (1 octet)
+					Mode (1 octet)
+					MTU (2 octets)
+					Key_Size (1 octet)
+					Response (2 octets)
+		Response parameters:	<none>
+
+		Valid Transport parameter values:
+					0x00 = BR/EDR
+					0x01 = LE
+
+		Valid Mode parameter values:
+					0x00 = Basic
+					0x01 = Retransmission
+					0x02 = Flow Control
+					0x03 = Enhanced Retransmission
+					0x04 = Streaming
+
+		This command is used to register L2CAP PSM and listen for
+		incoming data.
+
+		The MTU parameter is used to specify initial MTU for channels.
+
+		Response parameter can be used to specify a response value used in
+		L2CAP Connection Response to send non-success responses like
+		Insufficient Authentication. If device bases its security requirements
+		for creating L2CAP connection on PSM, this value should be 0x00.
+
+		Valid Response values:
+					0x00 = Success
+					0x01 = Insufficient authentication
+					0x02 = Insufficient authorization
+					0x03 = Insufficient encryption key size
+					0x04 = Insufficient encryption
+
+		In case of an error, the error response will be returned.
+
 Events:
 	Opcode 0x80 - Connection Request Event
 

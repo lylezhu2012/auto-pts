@@ -51,6 +51,8 @@ L2CAP = {
                 CONTROLLER_INDEX),
     "cls_send": (defs.BTP_SERVICE_ID_L2CAP, defs.L2CAP_CLS_SEND,
                 CONTROLLER_INDEX),
+    "listen_with_mode": (defs.BTP_SERVICE_ID_L2CAP, defs.L2CAP_LISTEN_WITH_MODE,
+               CONTROLLER_INDEX),
 }
 
 
@@ -412,6 +414,25 @@ def l2cap_cls_send(bd_addr, bd_addr_type, psm, val=None, val_mtp=None):
         data_ba.extend(val_ba)
 
     iutctl.btp_socket.send_wait_rsp(*L2CAP['cls_send'], data=data_ba)
+
+
+def l2cap_listen_with_mode(psm, transport, mode=defs.L2CAP_MODE_BASIC, mtu=0, response=L2CAPConnectionResponse.success):
+    logging.debug("%s %r %r %r %r %r", l2cap_listen_with_mode.__name__, psm, transport, mode, mtu, response)
+
+    iutctl = get_iut()
+
+    if isinstance(psm, str):
+        psm = int(psm, 16)
+
+    data_ba = bytearray(struct.pack('H', psm))
+    data_ba.extend(struct.pack('B', transport))
+    data_ba.extend(struct.pack('B', mode))
+    data_ba.extend(struct.pack('H', mtu))
+    data_ba.extend(struct.pack('H', response))
+
+    iutctl.btp_socket.send(*L2CAP['listen_with_mode'], data=data_ba)
+
+    l2cap_command_rsp_succ(defs.L2CAP_LISTEN_WITH_MODE)
 
 
 L2CAP_EV = {
